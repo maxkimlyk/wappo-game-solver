@@ -1,0 +1,18 @@
+width = 6
+height = 6
+
+[ ][  ][ ][  ][b][e]
+[ ][tr][ ][  ][b][b]
+[b][  ][ ][  ][ ][m]
+[ ][  ][ ][r ][h][t]
+[ ][  ][s][br][t][b]
+[ ][  ][ ][  ][ ][ ]
+
+; b - bottom wall
+; t - top wall
+; l - left wall
+; r - right wall
+; s - start
+; h - human start point
+; m - monster start point
+; e - exit cell
