@@ -7,13 +7,15 @@
 
 struct monster
 {
-    point pt;
+    point pt = {0, 0};
     size_t freeze = 0;
+    bool is_boosted = false;
+    bool is_hided = false;
 };
 
 struct game_state
 {
-    using key_type = uint32_t;
+    using key_type = uint64_t;
 
     point man;
     std::vector<monster> monsters;
@@ -24,7 +26,8 @@ struct game_state
     {
         key_type key = man.x | (man.y << 4);
         for (auto m : monsters)
-            key = (key << 10) | (m.pt.x | (m.pt.y << 4) | (m.freeze << 8));
+            key = (key << 12)
+                | (m.pt.x | (m.pt.y << 4) | (m.freeze << 8) | (m.is_boosted << 10) | (m.is_hided << 11));
         return key;
     }
 };
@@ -52,7 +55,7 @@ public:
         game_state init;
         init.man = map_.get_human_start_point();
         for (auto pt : map_.get_monster_start_points())
-            init.monsters.push_back(monster {pt.y, pt.x, 0});
+            init.monsters.push_back(monster {pt, 0, false, false});
         init.prev_state_key = 0;
         init.has_prev = false;
         return init;
@@ -128,51 +131,66 @@ public:
 private:
     void monsters_walk(game_state& state) const
     {
-        for (auto& monster : state.monsters)
+        std::vector<size_t> steps_left(state.monsters.size());
+        for (size_t i = 0; i < state.monsters.size(); ++i)
+            steps_left[i] = state.monsters[i].is_hided ? 0 : (state.monsters[i].is_boosted ? 3 : 2);
+
+        for (size_t step = 0; step < 3; ++step)
         {
-            if (monster.freeze)
+            for (size_t i = 0; i < state.monsters.size(); ++i)
             {
-                monster.freeze--;
-                continue;
-            }
+                auto& monster = state.monsters[i];
 
-            size_t count = 0;
-            size_t prev_count = count;
+                if (monster.freeze && !monster.is_boosted)
+                {
+                    steps_left[i] = 0;
+                    if (step == 0)
+                        monster.freeze--;
+                    continue;
+                }
 
-            while (count < 2)
-            {
+                if (steps_left[i] == 0)
+                    continue;
+
+                steps_left[i]--;
+
                 if (state.man.x < monster.pt.x && map_.can_go(monster.pt, LEFT))
                 {
-                    monster.pt.x --;
-                    count++;
+                    monster.pt.x--;
                 }
                 else if (monster.pt.x < state.man.x && map_.can_go(monster.pt, RIGHT))
                 {
-                    monster.pt.x ++;
-                    count++;
+                    monster.pt.x++;
                 }
                 else if (monster.pt.y < state.man.y && map_.can_go(monster.pt, DOWN))
                 {
-                    monster.pt.y ++;
-                    count++;
+                    monster.pt.y++;
                 }
                 else if (state.man.y < monster.pt.y && map_.can_go(monster.pt, UP))
                 {
-                    monster.pt.y --;
-                    count++;
+                    monster.pt.y--;
                 }
-
-                if (prev_count == count)
-                    break;
+                else
+                {
+                    steps_left[i] = 0;
+                    continue;
+                }
 
                 if (map_.at(monster.pt).get(STAR))
-                {
                     monster.freeze = 3;
-                    break;
-                }
-
-                prev_count = count;
             }
+
+            for (size_t i = 0; i < state.monsters.size(); ++i)
+                for (size_t j = i + 1; j < state.monsters.size(); ++j)
+                {
+                    if (state.monsters[j].pt == state.monsters[i].pt && !state.monsters[j].is_hided && !state.monsters[i].is_hided)
+                    {
+                        state.monsters[j].is_boosted = true;
+                        state.monsters[i].is_hided = true;
+                        steps_left[j] = 0;
+                        steps_left[i] = 0;
+                    }
+                }
         }
     }
 };

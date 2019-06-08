@@ -12,7 +12,7 @@ height = 6
 ; t - top wall
 ; l - left wall
 ; r - right wall
-; s - start
+; s - star
 ; h - human start point
 ; m - monster start point
 ; e - exit cell

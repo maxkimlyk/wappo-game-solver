@@ -1,5 +1,5 @@
-#ifndef __BRUTFORCER_HPP__
-#define __BRUTFORCER_HPP__
+#ifndef __BRUTEFORCER_HPP__
+#define __BRUTEFORCER_HPP__
 
 #include <algorithm>
 #include <unordered_map>
@@ -8,7 +8,7 @@
 #include "game_emulator.hpp"
 #include "update_string.hpp"
 
-class brutforcer
+class bruteforcer
 {
     game_emulator& game_;
 
@@ -21,12 +21,12 @@ class brutforcer
     update_string status_line_;
 
 public:
-    brutforcer(game_emulator& game) : game_(game), is_solved_(false), status_line_(std::cout)
+    bruteforcer(game_emulator& game) : game_(game), is_solved_(false), status_line_(std::cout)
     {
         state_table_.reserve(4096);
     }
 
-    ~brutforcer()
+    ~bruteforcer()
     {
     }
 
@@ -45,6 +45,11 @@ public:
             {
                 if (auto next_state = game_.next_state(state, dir))
                 {
+                    // std::cout << "\n" << "{" << state.man.x + 1 << ", " << state.man.y + 1 << "; "
+                    //           << state.monsters[0].pt.x + 1 << ", " << state.monsters[0].pt.y + 1 << "} ";
+                    // std::cout << dir;
+                    // std::cout << " {" << next_state.value().man.x + 1 << ", " << next_state.value().man.y + 1 << "; "
+                    //           << next_state.value().monsters[0].pt.x + 1 << ", " << next_state.value().monsters[0].pt.y + 1 << "} ";
                     if (game_.is_final_state(next_state.value()))
                     {
                         is_solved_ = true;
