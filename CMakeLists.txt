@@ -8,7 +8,7 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Could not find BOOST package")
 endif()
 
-file(GLOB SRC *.cpp)
+file(GLOB SRC src/*.cpp)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
