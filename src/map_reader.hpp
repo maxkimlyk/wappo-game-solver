@@ -23,7 +23,7 @@ public:
         std::getline(file, line);
         size_t height = get_value_from_string<size_t>(line, "height");
 
-        map_ = map(width, height);
+        map_ = map(height, width);
 
         size_t count = 0;
         while (count < width * height)

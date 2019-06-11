@@ -45,11 +45,7 @@ public:
             {
                 if (auto next_state = game_.next_state(state, dir))
                 {
-                    // std::cout << "\n" << "{" << state.man.x + 1 << ", " << state.man.y + 1 << "; "
-                    //           << state.monsters[0].pt.x + 1 << ", " << state.monsters[0].pt.y + 1 << "} ";
-                    // std::cout << dir;
-                    // std::cout << " {" << next_state.value().man.x + 1 << ", " << next_state.value().man.y + 1 << "; "
-                    //           << next_state.value().monsters[0].pt.x + 1 << ", " << next_state.value().monsters[0].pt.y + 1 << "} ";
+                    // std::cout << state << " " << dir << " " <<  next_state.value() << "\n";
                     if (game_.is_final_state(next_state.value()))
                     {
                         is_solved_ = true;
@@ -86,7 +82,6 @@ private:
             state_table_.insert(std::make_pair(key, std::forward<State>(state)));
             task_queue_.push(key);
             status_line_ << reset() << "state_table size: " << state_table_.size();
-            // std::cout << "\n" << state << "\n";
         }
     }
 

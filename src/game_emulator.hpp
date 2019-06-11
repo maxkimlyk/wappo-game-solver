@@ -34,9 +34,9 @@ struct game_state
 
 static std::ostream& operator<< (std::ostream& stream, const game_state& state)
 {
-    stream << "{man: (" << state.man.y << "," << state.man.x << ")";
+    stream << "{h: (" << state.man.y << "," << state.man.x << ")";
     for (size_t i = 0; i < state.monsters.size(); ++i)
-        stream << " monster" << i << ": (" << state.monsters[i].pt.y << "," << state.monsters[i].pt.x << ")";
+        stream << " m" << i << ": (" << state.monsters[i].pt.y << "," << state.monsters[i].pt.x << ")";
     stream << "}";
     return stream;
 }
